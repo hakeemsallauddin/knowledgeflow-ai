@@ -198,35 +198,28 @@ FIRST_SUPERUSER_PASSWORD=
 
 ## Login
 
-![Login](docs/screenshots/login.png)
+![Login](docs/screenshots/Login.png)
 
 ## Register
 
-![Register](docs/screenshots/register.png)
+![Register](docs/screenshots/Register.png)
 
 ## Dashboard
 
-![Dashboard](docs/screenshots/dashboard.png)
+![Dashboard](docs/screenshots/Dashboard.png)
 
 ## Upload
 
-![Upload](docs/screenshots/upload.png)
+![Upload](docs/screenshots/Upload.png)
 
 ## Chat
 
-![Chat](docs/screenshots/chat.png)
+![Chat](docs/screenshots/Chat.png)
 
-## Summary
-
-![Summary](docs/screenshots/summary.png)
-
-## Citations
-
-![Citations](docs/screenshots/citations.png)
 
 ## Swagger
 
-![Swagger](docs/screenshots/swagger.png)
+![Swagger](docs/screenshots/Swagger.png)
 
 ---
 
