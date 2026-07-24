@@ -1,132 +1,260 @@
-# Project Overview
+# 🧠 KnowledgeFlow AI
 
-The goal of developing this repository is to create a scalable project based on RAG operations of a vector database (Postgres with pgvector), and to expose a question-answering system developed with LangChain and FastAPI on a Next.js frontend.
+> **Enterprise Document Intelligence Platform using FastAPI, React, LangChain, PostgreSQL, and PGVector**
 
-The entire system will be deployed in a serverless manner, both on the backend (a Terraform submodule for setting up a cloud run with CloudSQL and Redis) and on the frontend (deployment via Vercel).
+KnowledgeFlow AI is a full-stack Retrieval-Augmented Generation (RAG) application that enables users to securely upload PDF documents, ask natural language questions, generate AI-powered summaries, and receive context-aware answers with source citations.
 
-Additionally, a layer will be added to limit the app's usage through a subscription plan via Stripe
+---
 
-## Setting Up the Infrastructure
+# 🚀 Features
 
-### Import Terraform Submodule
+### Authentication
+- User Registration
+- Secure Login
+- JWT Authentication
+- Password Hashing (bcrypt)
+- Protected Backend APIs
+- Protected React Routes
+- Logout
 
-Refer to the following guide for adding and managing submodules:
-[Adding a Submodule and Committing Changes: Git, Terraform, FastAPI](https://medium.com/@saverio3107/adding-a-submodule-and-committing-changes-git-terraform-fastapi-6fe9cf7c9ba7?sk=595dafdaa36427a2d6efee8c08940ee9)
+### Document Processing
+- Upload PDF Documents
+- Automatic Text Extraction
+- Text Chunking
+- Vector Embedding Generation
+- PostgreSQL + PGVector Storage
 
-**Steps to Initialize Terraform:**
+### AI Capabilities
+- Document Question Answering
+- AI Document Summarization
+- Semantic Search
+- Context-Aware Retrieval
+- Source Citations
 
-Navigate to the Terraform directory and initialize the configuration:
+### Frontend
+- React Dashboard
+- Markdown Rendering
+- Responsive UI
+- Loading Indicators
 
-```bash
-cd terraform
-terraform init
-terraform apply
+---
+
+# 🏗 System Architecture
+
+```text
+                 ┌──────────────────────┐
+                 │    React Frontend    │
+                 │ Login • Upload • Chat│
+                 └──────────┬───────────┘
+                            │
+                     HTTP + JWT
+                            │
+                            ▼
+                 ┌──────────────────────┐
+                 │   FastAPI Backend    │
+                 │ Authentication & API │
+                 └──────────┬───────────┘
+                            │
+          ┌─────────────────┼─────────────────┐
+          │                 │                 │
+          ▼                 ▼                 ▼
+ PostgreSQL Users     PDF Upload API     Chat Endpoint
+                            │
+                            ▼
+                    PDF Text Extraction
+                            │
+                            ▼
+                      Document Chunking
+                            │
+                            ▼
+     sentence-transformers/all-MiniLM-L6-v2
+                            │
+                            ▼
+                     PostgreSQL + PGVector
+                            │
+                            ▼
+                    LangChain Retriever
+                            │
+                            ▼
+                    OpenRouter LLM
+                            │
+                            ▼
+              AI Answer + Source Citations
 ```
 
-## Configuring the Application
+---
 
-### Set Environment Variables
+# 🧠 AI Workflow
 
-Duplicate the `.env.example` file and set the required variables:
-
-```bash
-cp .env.example .env
+```
+Upload PDF
+      │
+      ▼
+Extract Text
+      │
+      ▼
+Chunk Document
+      │
+      ▼
+Generate Embeddings
+      │
+      ▼
+Store in PGVector
+      │
+      ▼
+Retrieve Relevant Chunks
+      │
+      ▼
+OpenRouter LLM
+      │
+      ▼
+Answer with Citations
 ```
 
-### Backend Setup
+---
 
-- **Navigate to the backend directory:**
+# 💻 Tech Stack
+
+| Layer | Technology |
+|--------|------------|
+| Frontend | React, React Router, Axios |
+| Backend | FastAPI, SQLModel |
+| AI | LangChain |
+| Embeddings | sentence-transformers/all-MiniLM-L6-v2 |
+| LLM | OpenRouter |
+| Database | PostgreSQL |
+| Vector Database | PGVector |
+| Authentication | JWT, OAuth2, bcrypt |
+| Containerization | Docker |
+
+---
+
+# 📂 Project Structure
+
+```text
+knowledgeflow-ai/
+│
+├── backend/
+├── frontend/
+├── docs/
+│   └── screenshots/
+├── README.md
+├── LICENSE
+├── .env.example
+└── .gitignore
+```
+
+---
+
+# ⚙ Installation
+
+## Clone
+
+```bash
+git clone https://github.com/hakeemsallauddin/knowledgeflow-ai.git
+```
+
+## Backend
 
 ```bash
 cd backend
-```
 
-- **Install dependencies using Poetry:**
-
-```bash
 poetry install
-poetry shell
+
+uvicorn app.api.main:app --reload
 ```
 
-### Database Connection
-
-Connect to the database using the Cloud SQL Proxy. Instructions are available in the Terraform README.
+## Frontend
 
 ```bash
-./cloud-sql-proxy ...
+cd frontend
+
+npm install
+
+npm run dev
 ```
 
-### Initialize Database
+---
 
-Run the initialization script to set up the database. This script adds the pgvector extension and creates a superuser:
+# 🔑 Environment Variables
 
-```bash
-python app/init_db.py
+Create a `.env` file in the backend directory.
+
+```env
+SECRET_KEY_ACCESS_API=
+DB_HOST=
+DB_PORT=
+DB_NAME=
+DB_USER=
+DB_PASS=
+OPENAI_API_KEY=
+FIRST_SUPERUSER=
+FIRST_SUPERUSER_PASSWORD=
 ```
 
-### Data Ingestion
+---
 
-Place your PDF files in `data/raw` and run the following script to populate the database:
+# 📸 Application Screenshots
 
-```bash
-python app/ingestion/run.py
-```
+## Login
 
-## Accessing the Application
+![Login](docs/screenshots/login.png)
 
-### API Documentation
+## Register
 
-Access live-generated API documentation at:
+![Register](docs/screenshots/register.png)
 
-```
-https://cloudrun-service-upr23soxia-uc.a.run.app/api/v1/docs
-```
+## Dashboard
 
-### Obtaining an Access Token
+![Dashboard](docs/screenshots/dashboard.png)
 
-Generate an access token using the `/api/v1/login/access-token` endpoint with credentials specified in your `.env` file.
+## Upload
 
-## Connecting the Frontend
+![Upload](docs/screenshots/upload.png)
 
-### Generate an Access Token
+## Chat
 
-Obtain an access token using the login endpoint:
+![Chat](docs/screenshots/chat.png)
 
-```javascript
-const token = "your_generated_access_token_here"; // Replace with actual token
-```
+## Summary
 
-### Example Frontend Integration
+![Summary](docs/screenshots/summary.png)
 
-Utilize the access token in your Next.js application as follows:
+## Citations
 
-```javascript
-const headers = new Headers({
-  Authorization: "Bearer " + token,
-  "Content-Type": "application/json",
-});
+![Citations](docs/screenshots/citations.png)
 
-async function chatAnswer() {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/qa/chat`,
-    {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify({ message: "Your query here" }),
-    }
-  );
-  return res.json();
-}
-```
+## Swagger
 
-## Subscription Management
+![Swagger](docs/screenshots/swagger.png)
 
-Integrate Stripe to manage subscriptions and limit usage based on the chosen plan. Follow Stripe's official documentation to set up the billing and subscription logic.
+---
 
-## Contributing
+# 📌 API Endpoints
 
-Contributions are welcome! For major changes, please open an issue first to discuss what you would like to change.
+| Method | Endpoint |
+|---------|----------|
+| POST | `/api/v1/register` |
+| POST | `/login/access-token` |
+| POST | `/api/v1/documents/upload` |
+| POST | `/api/v1/qa/chat` |
 
-## License
+---
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+# 🔮 Future Improvements
+
+- Multiple document collections
+- OCR support
+- Conversation history
+- User-specific document libraries
+- Streaming AI responses
+- Role-Based Access Control
+- Admin Dashboard
+
+---
+
+# 👨‍💻 Author
+
+**Sallauddin Hakeem**
+
+GitHub: https://github.com/hakeemsallauddin

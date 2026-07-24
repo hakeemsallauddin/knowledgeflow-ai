@@ -1,6 +1,6 @@
 *.ipynb
-*frontend
-frontend/*
+frontend/node_modules/
+frontend/dist/
 db_docker
 *.tfvars*
 *terraform.tfstate*
