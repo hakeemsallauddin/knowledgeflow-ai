@@ -1,5 +1,5 @@
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11
-
+ENV TIMEOUT=300
 WORKDIR /app/
 
 # Install Poetry
