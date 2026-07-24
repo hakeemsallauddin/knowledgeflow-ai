@@ -41,7 +41,8 @@ pypdf = "^4.2.0"
 unstructured-pytesseract = "^0.3.12"
 unstructured-inference = "^0.7.25"
 bcrypt = "4.0.1"
-sentence-transformers = "^5.6.0"
+sentence-transformers = "3.0.1"
+transformers = "4.44.2"
 
 
 [tool.poetry.group.dev.dependencies]
