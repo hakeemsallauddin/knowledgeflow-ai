@@ -1,5 +1,4 @@
 from typing import List
-
 from langchain.embeddings import CacheBackedEmbeddings
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from app.init_db import logger
@@ -17,18 +16,17 @@ class CacheBackedEmbeddingsExtended(CacheBackedEmbeddings):
         return text_embeddings
 
 
-# ----------------------------------------------------------
-# Load the model ONLY ONCE when FastAPI starts
-# ----------------------------------------------------------
-
-logger.info("Loading HuggingFace embedding model...")
-
-_EMBEDDING_MODEL = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
-)
-
-logger.info("HuggingFace embedding model loaded successfully.")
+_embedding_model = None
 
 
 def get_embedding_model():
-    return _EMBEDDING_MODEL
+    global _embedding_model
+
+    if _embedding_model is None:
+        logger.info("Loading HuggingFace embedding model...")
+        _embedding_model = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L6-v2"
+        )
+        logger.info("HuggingFace embedding model loaded successfully.")
+
+    return _embedding_model
