@@ -40,6 +40,8 @@ pikepdf = "^8.15.0"
 pypdf = "^4.2.0"
 unstructured-pytesseract = "^0.3.12"
 unstructured-inference = "^0.7.25"
+bcrypt = "4.0.1"
+sentence-transformers = "^5.6.0"
 
 
 [tool.poetry.group.dev.dependencies]

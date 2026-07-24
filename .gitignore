@@ -178,3 +178,4 @@ cython_debug/
 # PDM
 .pdm.toml
 #pdm.lock (uncomment the next line to ignore)
+.env

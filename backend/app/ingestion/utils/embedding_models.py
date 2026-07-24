@@ -1,26 +1,13 @@
-from typing import List, Optional, Union
+from typing import List
 
 from langchain.embeddings import CacheBackedEmbeddings
-from langchain_openai import OpenAIEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from app.init_db import logger
 
 
 class CacheBackedEmbeddingsExtended(CacheBackedEmbeddings):
     def embed_query(self, text: str) -> List[float]:
-        """
-        Embed query text.
-
-        Extended to support caching
-
-        Args:
-            text: The text to embed.
-
-        Returns:
-            The embedding for the given text.
-        """
-        vectors: List[Union[List[float], None]] = self.document_embedding_store.mget(
-            [text]
-        )
+        vectors = self.document_embedding_store.mget([text])
         text_embeddings = vectors[0]
 
         if text_embeddings is None:
@@ -30,19 +17,18 @@ class CacheBackedEmbeddingsExtended(CacheBackedEmbeddings):
         return text_embeddings
 
 
-def get_embedding_model() -> CacheBackedEmbeddings:
-    """
-    Get the embedding model from the embedding model type.
-    """
+# ----------------------------------------------------------
+# Load the model ONLY ONCE when FastAPI starts
+# ----------------------------------------------------------
 
-    underlying_embeddings = OpenAIEmbeddings()
+logger.info("Loading HuggingFace embedding model...")
 
-    # embedder = CacheBackedEmbeddingsExtended(underlying_embeddings)
+_EMBEDDING_MODEL = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+)
 
-    logger.info(f"Loaded embedding model: {underlying_embeddings.model}")
+logger.info("HuggingFace embedding model loaded successfully.")
 
-    # store = get_redis_store()
-    # embedder = CacheBackedEmbeddingsExtended.from_bytes_store(
-    #     underlying_embeddings, store, namespace=underlying_embeddings.model
-    # )
-    return underlying_embeddings
+
+def get_embedding_model():
+    return _EMBEDDING_MODEL
