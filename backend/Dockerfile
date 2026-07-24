@@ -1,24 +1,30 @@
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11
 
+ENV TIMEOUT=300
+
 WORKDIR /app/
 
-# Install required Linux libraries
+# System libraries required by transformers/opencv
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry
-RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python && \
-    cd /usr/local/bin && \
-    ln -s /opt/poetry/bin/poetry && \
-    poetry config virtualenvs.create false
+ENV POETRY_HOME=/opt/poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
 
-COPY ./pyproject.toml ./poetry.lock* /app/
+ENV PATH="$POETRY_HOME/bin:$PATH"
 
-ARG INSTALL_DEV=false
-RUN bash -c "if [ $INSTALL_DEV == 'true' ] ; then poetry install --no-root ; else poetry install --no-root --only main ; fi"
+RUN poetry config virtualenvs.create false
+
+COPY pyproject.toml poetry.lock* ./
+
+RUN poetry install --no-root --only main
+
+COPY app ./app
 
 ENV PYTHONPATH=/app
-
-COPY ./app /app/app
